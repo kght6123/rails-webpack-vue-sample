@@ -63,3 +63,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 # Use Webpacker
 gem 'webpacker', '~> 3.5'
+
+# Use Bootstrap4
+gem 'jquery-rails'
+gem 'bootstrap', '~> 4.2.1'

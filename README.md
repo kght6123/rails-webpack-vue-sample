@@ -957,11 +957,35 @@ https://vuetifyjs.com/ja/
 % yarn add vuetify
 ```
 
-`mirai-blog/app/javascript/packs/welcome/pages/page1.vue`、`mirai-blog/app/assets/stylesheets/welcome.scss`にimportを追加し、
+`mirai-blog/app/javascript/packs/welcome/index.js`、`mirai-blog/app/assets/stylesheets/welcome.scss`にimportを追加し、
 
-`mirai-blog/app/javascript/packs/welcome/index.js`にUIコンポーネントを追加
+`mirai-blog/app/javascript/packs/welcome/pages/page1.vue`にUIコンポーネントを追加
 
 https://vuetifyjs.com/ja/components/api-explorer
+
+## Bootstrap4をインストール
+
+https://github.com/twbs/bootstrap-rubygem
+
+Gemfileに下記を追記
+
+```Gemfile
+gem 'jquery-rails'
+gem 'bootstrap', '~> 4.2.1'
+```
+
+下記のコマンドを実行
+
+```sh
+% bundle install # error!!! 指示通りにupdateを実行する
+% bundle update
+```
+
+`mirai-blog/app/javascript/packs/welcome/index.js`、`mirai-blog/app/assets/stylesheets/welcome.scss`にimportを追加し、
+
+`mirai-blog/app/javascript/packs/welcome/pages/page1.vue`にUIコンポーネントを追加
+
+https://hackerthemes.com/bootstrap-cheatsheet/
 
 
 ## 認証・セキュリティ周りを調べたい
