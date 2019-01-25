@@ -4,6 +4,16 @@
 
 今は開発中です。しばらくかかります。
 
+# Commands
+
+```sh
+% bin/rails server # url => http://localhost:3000/
+% bin/webpack # build webpack
+% bin/webpack-dev-server # start dev-server webpack
+```
+
+# Env
+
 * Ruby version
 
 * System dependencies
@@ -847,13 +857,120 @@ def destroy
 end
 ```
 
+## Webpackerをインストール
+
+https://github.com/rails/webpacker
+
+Gemfileに下記を追記
+
+```Gemfile
+# Gemfile
+% gem 'webpacker', '~> 3.5'
+```
+
+下記のコマンドを実行
+
+```sh
+% bundle # bundle installの略？
+% bundle exec rails webpacker:install # webpackerのインストール
+% 
+% yarn upgrade # fix "unmet peer dependency" warnings,
+```
+
+## TypeScriptをインストール
+
+```sh
+% rails webpacker:install:typescript
+Webpacker is installed 🎉 🍰
+Using /Users/kogahirotaka/develop/ruby-on-rails/MiraiBlog/mirai-blog/config/webpacker.yml file for setting up webpack paths
+Copying typescript loader to config/webpack/loaders
+      create  config/webpack/loaders/typescript.js
+Adding typescript loader to config/webpack/environment.js
+      insert  config/webpack/environment.js
+      insert  config/webpack/environment.js
+Copying tsconfig.json to the Rails root directory for typescript
+      create  tsconfig.json
+Updating webpack paths to include .ts file extension
+      insert  config/webpacker.yml
+Updating webpack paths to include .tsx file extension
+      insert  config/webpacker.yml
+Copying the example entry file to /Users/kogahirotaka/develop/ruby-on-rails/MiraiBlog/mirai-blog/app/javascript/packs
+      create  app/javascript/packs/hello_typescript.ts
+Installing all typescript dependencies
+         run  yarn add typescript ts-loader@3.5.0  from "."
+
+% bin/webpack # build
+```
+
+## Vue周りをインストール
+
+```sh
+% bin/rails webpacker:install:vue # rails対応
+Copying vue loader to config/webpack/loaders
+      create  config/webpack/loaders/vue.js
+Adding vue loader to config/webpack/environment.js
+      insert  config/webpack/environment.js
+      insert  config/webpack/environment.js
+Updating webpack paths to include .vue file extension
+      insert  config/webpacker.yml
+Copying the example entry file to /Users/kogahirotaka/develop/ruby-on-rails/MiraiBlog/mirai-blog/app/javascript/packs
+      create  app/javascript/packs/hello_vue.js
+Copying Vue app file to /Users/kogahirotaka/develop/ruby-on-rails/MiraiBlog/mirai-blog/app/javascript/packs
+      create  app/javascript/app.vue
+Installing all Vue dependencies
+         run  yarn add vue vue-loader@14.2.2 vue-template-compiler from "."
+
+% yarn add axios vue-loader vue-router vue-template-compiler vuex vue-eslint-parser # Rails非対応
+```
+
+vue-loaderのv15からは、VueLoaderPluginの定義が必要だが、Railsのconfig/webpack/environment.jsに無い
+
+v14に下げるか、v15は下記のPluginの読み込みをconfig/webpack/environment.jsに追記
+
+https://github.com/rails/webpacker/issues/1453
+
+```sh
+% yarn upgrade vue-loader@14.2.2 # for v14
+% yarn upgrade vue-loader@15.6.0 # for newer
+```
+
+```js
+// add config/webpack/environment.js
+
+// Required for vue-loader v15
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+environment.plugins.append(
+  'VueLoaderPlugin',
+  new VueLoaderPlugin()
+)
+```
+
+https://qiita.com/takano-h/items/f5417cb6ff04c1d8c806#configroutesrb
+
+https://qiita.com/MariMurotani/items/f040e3ce23ece18d50df
+
+## Vuetifyのインストール
+
+https://vuetifyjs.com/ja/
+
+```sh
+% yarn add vuetify
+```
+
+`mirai-blog/app/javascript/packs/welcome/pages/page1.vue`、`mirai-blog/app/assets/stylesheets/welcome.scss`にimportを追加し、
+
+`mirai-blog/app/javascript/packs/welcome/index.js`にUIコンポーネントを追加
+
+https://vuetifyjs.com/ja/components/api-explorer
+
+
 ## 認証・セキュリティ周りを調べたい
 
 Securing Rails Applications https://guides.rubyonrails.org/security.html
 
 ## Railsと組み合わせたいフレームワークやライブラリ
 
-Docker、Vue.js（Vuex、VueRouter、https://vuetifyjs.com/ja/）、TypeScript、StoryBook、erb->slims、Bootstrap4（Reboot.css）
+Docker、Vue.js（Vuex、VueRouter、Vuetify）、TypeScript、StoryBook、erb->slims、Bootstrap4（Reboot.css）
 
 VSCodeのBrowser Preview拡張
 
