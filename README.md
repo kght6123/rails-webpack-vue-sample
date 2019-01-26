@@ -988,13 +988,82 @@ gem 'bootstrap', '~> 4.2.1'
 https://hackerthemes.com/bootstrap-cheatsheet/
 
 
+## StoryBookをインストール
+
+https://github.com/rails/webpacker/issues/1004
+
+https://storybook.js.org/basics/guide-vue/
+
+```sh
+% yarn add @storybook/vue
+```
+
+mirai-blog/package.json に追記する
+
+```json
+"scripts": {
+  "storybook": "start-storybook -p 9001 -c .storybook"
+}
+```
+
+.storybook/config.js を作成する
+
+```js
+const path = require('path');
+const { environment } = require('@rails/webpacker');
+const genDefaultConfig = require('@storybook/vue'/*'@storybook/react/dist/server/config/defaults/webpack.config.js'*/);
+
+const vueLoader = require('./../config/webpack/loaders/vue');
+const tsLoader = require('./../config/webpack/loaders/typescript');
+
+module.exports = (baseConfig, env) => {
+  const config = genDefaultConfig(baseConfig, env);
+
+  // Extend Storybook Webpack's resolve paths from Webpacker config
+  config.resolve.modules = environment.toWebpackConfig().resolve.modules;
+
+  // Add Sass and Yaml Loader
+  config.module.rules.push(vueLoader);
+  config.module.rules.push(tsLoader);
+
+  return config;
+}
+```
+
+そこまでは、利点がなさそうな予感、、、
+
+## slim テンプレート
+
+https://qiita.com/mom0tomo/items/999f806d083569529f81
+
+Gemfileにrails-slimを追加
+
+```
+gem 'slim-rails', '3.1.3'
+```
+
+インストールする
+
+```sh
+bundle install
+```
+
+config/application.rb にデフォルトテンプレートエンジンを設定
+
+```rb
+class Application < Rails::Application
+  config.generators.template_engine = :slim # ADD
+end
+```
+
+
 ## 認証・セキュリティ周りを調べたい
 
 Securing Rails Applications https://guides.rubyonrails.org/security.html
 
 ## Railsと組み合わせたいフレームワークやライブラリ
 
-Docker、Vue.js（Vuex、VueRouter、Vuetify）、TypeScript、StoryBook、erb->slims、Bootstrap4（Reboot.css）
+Docker、Vue.js（Vuex、VueRouter、Vuetify）、TypeScript、StoryBook、erb->slim、Bootstrap4（Reboot.css）
 
 VSCodeのBrowser Preview拡張
 
