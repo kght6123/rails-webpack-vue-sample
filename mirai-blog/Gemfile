@@ -67,3 +67,6 @@ gem 'webpacker', '~> 3.5'
 # Use Bootstrap4
 gem 'jquery-rails'
 gem 'bootstrap', '~> 4.2.1'
+
+# Use slim
+gem 'slim-rails', '~> 3.1.3'

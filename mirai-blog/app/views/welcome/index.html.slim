@@ -1,0 +1,19 @@
+h1 Hello, Rails!
+= link_to 'My Blog', controller: 'articles'
+
+p
+	/! app/assets/images/cat.png
+	img.welcome_index_img_title src="#{image_url('jetbrains-variant-2.png')}"
+	This part is written on ERB file
+	/! app/javascript/packs/images/logo.png
+	img.welcome_index_img_title src="#{asset_pack_path 'packs/images/illustrain10-doubutu20.png'}"
+
+p.welcome_index_p_title.welcome_index Find me in app/views/welcome/index.html.erb
+
+/! Rendered by vue JS
+#app
+
+/= javascript_pack_tag 'application'
+/= stylesheet_pack_tag 'application'
+= javascript_pack_tag 'welcome/index'
+= stylesheet_pack_tag 'welcome/index'
