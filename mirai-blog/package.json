@@ -2,19 +2,19 @@
   "name": "mirai-blog",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "3.5",
+    "@rails/webpacker": "^3.5.5",
     "axios": "^0.18.0",
-    "ts-loader": "3.5.0",
+    "ts-loader": "^3.5.0",
     "typescript": "^3.2.4",
     "vue": "^2.5.22",
     "vue-eslint-parser": "^5.0.0",
-    "vue-loader": "^15.6.0",
+    "vue-loader": "^15.6.1",
     "vue-router": "^3.0.2",
     "vue-template-compiler": "^2.5.22",
     "vuetify": "^1.4.3",
     "vuex": "^3.1.0"
   },
   "devDependencies": {
-    "webpack-dev-server": "2.11.2"
+    "webpack-dev-server": "^2.11.2"
   }
 }
