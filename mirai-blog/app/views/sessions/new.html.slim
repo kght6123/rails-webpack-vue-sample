@@ -1,0 +1,6 @@
+= form_for :session, url: login_path do |f|
+  = f.text_field :mail, :class => 'page_name'
+  = f.password_field :password
+  = f.submit 'ログイン'
+= link_to 'Welcome', controller: 'welcome', action: "index", method: :get
+= link_to 'Root', '/'

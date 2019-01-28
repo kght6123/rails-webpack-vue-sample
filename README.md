@@ -1056,6 +1056,243 @@ class Application < Rails::Application
 end
 ```
 
+## ユーザ認証
+
+Railsでgemなしでログイン機能を実装 https://qiita.com/tmzkysk/items/12c3392dff6da1c87fdf
+
+Gemfileのbcryptのコメントアウトを解除し、`bundle install`を実行
+
+```
+gem 'bcrypt', '~> 3.1.7'
+```
+
+ミラグレートファイル（mirai-blog/db/migrate/20190127151836_create_users.rb）を作成
+
+```rb
+class CreateUsers < ActiveRecord::Migration[5.2]
+  def change
+    create_table :users, force: :cascade do |t|
+      t.string   :name,              limit: 191,             null: false
+      t.string   :mail,              limit: 191,             null: false
+      t.string   :password_digest,   limit: 191,             null: false
+      t.string   :remember_token,    limit: 191
+      t.datetime :created_at,                                null: false
+      t.datetime :updated_at,                                null: false
+    end
+  end
+end
+```
+
+DBのマイグレーションを実行
+
+```sh
+% bin/rails db:migrate
+== 20190127151836 CreateUsers: migrating ======================================
+-- create_table(:users, {:force=>:cascade})
+   -> 0.0024s
+== 20190127151836 CreateUsers: migrated (0.0024s) =============================
+```
+
+モデル（mirai-blog/app/models/user.rb）を作成
+ * Rails5は、`ActiveRecord::Base`から`ApplicationRecord`に変更
+ * has_secure_passwordは、password, password_confirmationをUserモデルのプロパティとして使用
+ * `validations: true`は
+   * userの新規登録時にpasswordの必須入力
+   * passwordとpassword_confirmationの内容が合致
+ * `validates 〜`は
+   * メールアドレスを必須入力かつユニークに
+
+```rb
+class User < ApplicationRecord
+  has_secure_password validations: true
+  validates :mail, presence: true, uniqueness: true
+
+  def self.new_remember_token
+    SecureRandom.urlsafe_base64
+  end
+  def self.encrypt(token)
+    Digest::SHA256.hexdigest(token.to_s)
+  end
+end
+```
+
+ログインユーザ作成画面（mirai-blog/app/views/users/new.html.slim）を作成
+
+```slim
+= form_for @user, url: users_path do |f|
+  = @user.errors.full_messages
+
+  = f.label :name
+  = f.text_field :name
+
+  = f.label :mail
+  = f.text_field :mail
+
+  = f.label :password
+  = f.text_field :password
+
+  = f.label :password_confirmation
+  = f.text_field :password_confirmation
+
+  = f.submit '登録'
+```
+
+ユーザーのコントローラ（mirai-blog/app/controllers/users_controller.rb）を作成
+
+```rb
+class UsersController < AuthController
+
+  # ログインしてなくても、ログイン画面に遷移させない（new、createメソッドのみ）
+  skip_before_action :require_sign_in!, only: [:new, :create]
+  
+  def new
+    @user = User.new
+  end
+  def create
+    @user = User.new(user_params)
+    if @user.save
+      redirect_to login_path
+    else
+      render 'new'
+    end
+  end
+  private
+    def user_params
+      params.require(:user).permit(:name, :mail, :password, :password_confirmation)
+    end
+end
+```
+
+ユーザ登録、セッションへのログイン、ログアウトのルートを（mirai-blog/config/routes.rb）に追加
+
+```rb
+Rails.application.routes.draw do
+  # ADD ユーザ登録
+  resources :users
+
+  # ADD ログイン / ログアウト
+  get     'login',   to: 'sessions#new'
+  post    'login',   to: 'sessions#create'
+  delete  'logout',  to: 'sessions#destroy'
+end
+```
+
+セッションへのログイン画面（mirai-blog/app/views/sessions/new.html.slim）を追加
+
+```rb
+= form_for :session, url: login_path do |f|
+  = f.text_field :mail
+  = f.password_field :password
+
+  = f.submit 'ログイン'
+```
+
+セッションのコントローラ（mirai-blog/app/controllers/sessions_controller.rb）を作成
+
+```rb
+class SessionsController < AuthController
+	
+	# ログインしてなくても、ログイン画面に遷移させない（new、createメソッドのみ）
+	skip_before_action :require_sign_in!, only: [:new, :create]
+
+	# メールアドレスからユーザの情報を取得（createメソッドの時のみ）
+	before_action :set_user, only: [:create]
+	
+	# ログイン画面を表示
+	def new
+	end
+	
+	def create
+		# パスワードの検証
+    if @user.authenticate(session_params[:password])
+			# ログイン（remember_tokenを作成）
+			sign_in(@user)
+      redirect_to root_path
+		else
+			# ログインエラー（パスワードが不正）
+      flash.now[:danger] = t('.flash.invalid_password')
+      render 'new'
+    end
+  end
+	def destroy
+		# ログアウト
+    sign_out
+    redirect_to login_path
+	end
+	
+	private
+		# メールアドレスからユーザの情報を取得
+    def set_user
+      @user = User.find_by!(mail: session_params[:mail])
+		rescue
+			# ログインエラー（メールアドレスが不正）
+      flash.now[:danger] = t('.flash.invalid_mail')
+      render action: 'new'
+    end
+    # 許可するパラメータ
+    def session_params
+      params.require(:session).permit(:mail, :password)
+    end
+end
+```
+
+ログイン・ログアウトメソッドを（mirai-blog/app/controllers/auth_controller.rb）に作成
+
+```rb
+class AuthController < ApplicationController
+
+	before_action :current_user
+  before_action :require_sign_in!
+  helper_method :signed_in?
+
+  protect_from_forgery with: :exception
+
+	# remember_tokenからユーザ情報を取得
+  def current_user
+    remember_token = User.encrypt(cookies[:user_remember_token])
+    @current_user ||= User.find_by(remember_token: remember_token)
+	end
+	# ログイン
+	def sign_in(user)
+    remember_token = User.new_remember_token
+    cookies.permanent[:user_remember_token] = remember_token
+    user.update!(remember_token: User.encrypt(remember_token))
+    @current_user = user
+	end
+	# ログアウト
+	def sign_out
+    cookies.delete(:user_remember_token)
+	end
+	# ログイン済みかどうかを判定して返す
+	def signed_in?
+    @current_user.present?
+  end
+  # ログイン済みでは無いときはログイン画面にリダイレクトする
+  private
+    def require_sign_in!
+      redirect_to login_path unless signed_in?
+    end
+end
+```
+
+トークン作成と暗号化を（mirai-blog/app/models/user.rb）に追加
+
+```rb
+  def self.new_remember_token
+    SecureRandom.urlsafe_base64
+  end
+
+  def self.encrypt(token)
+    Digest::SHA256.hexdigest(token.to_s)
+  end
+```
+
+http://localhost:3000/users/new
+
+admin@kght6123.work
+  - kght6123
+
+http://localhost:3000/login
 
 ## 認証・セキュリティ周りを調べたい
 

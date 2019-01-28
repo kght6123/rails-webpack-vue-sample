@@ -9,4 +9,12 @@ Rails.application.routes.draw do
 
   # ADD routeアクセスでwalcomeコントローラのindexが呼ばれる
   root 'welcome#index'
+
+  # ADD ユーザ登録
+  resources :users
+
+  # ADD ログイン / ログアウト
+  get     'login',   to: 'sessions#new'
+  post    'login',   to: 'sessions#create'
+  delete  'logout',  to: 'sessions#destroy'
 end

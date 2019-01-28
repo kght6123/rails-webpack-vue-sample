@@ -1,6 +1,7 @@
 h1 Hello, Rails!
 = link_to 'My Blog', controller: 'articles'
-
+= link_to 'New User', controller: 'users', action: "new", method: :get
+= link_to 'Login', '/login', method: :get
 p
 	/! app/assets/images/cat.png
 	img.welcome_index_img_title src="#{image_url('jetbrains-variant-2.png')}"

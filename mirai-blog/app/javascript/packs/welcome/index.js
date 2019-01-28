@@ -17,7 +17,8 @@ Vue.use(VueRouter);
 Vue.use(Vuex);
 Vue.use(Vuetify);
 
-document.addEventListener('DOMContentLoaded', () => {
+// SPAでは無いため、毎回、ロードする必要がある
+//document.addEventListener('DOMContentLoaded', () => {
   const el = document.body.appendChild(document.createElement('hello'))
   const app = new Vue({
     el,
@@ -26,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     render: h => h(main)
   })
   console.log(app)
-})
+//})
 
 //= require jquery3
 //= require popper
