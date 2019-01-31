@@ -2,25 +2,13 @@
 <div class="page1">
   <h1>{{ msg }}</h1>
   <div class="message">
-  <p class="page1_message_inner">これはページ1です。</p><br>
-  ここが他のページに入れ替わります。<br>
-  この中はふつーのHTMLで記載できます。<br>
-  スタイルシートのスコープなんてきにしなくてへいき。<br>
-  </div>
-  <!-- bootstrap4 -->
-  <div class="jumbotron">
-    <h1 class="display-3">Hello, world!</h1>
-    <p class="lead">This is a simple hero unit, a simple jumbotron-style component for
-                    calling extra attention to featured content or information.</p>
-    <hr class="my-2">
-    <p>It uses utility classes for typography and
-      spacing to space content out within the larger container.</p>
-    <p class="lead">
-      <a class="btn btn-primary btn-lg" href="#!" role="button">Some action</a>
-    </p>
+    <p class="page1_message_inner">これはページ1(vuetify)です。</p><br>
+    ここが他のページに入れ替わります。<br>
+    この中はふつーのHTMLで記載できます。<br>
+    スタイルシートのスコープなんてきにしなくてへいき。<br>
   </div>
   <!-- Vuetify -->
-  <v-app>
+  <v-app dark>
     <p>{{ msg }}</p>
     <v-alert
       :value="true"
@@ -28,12 +16,32 @@
     >
       This is a success alert.
     </v-alert>
+    <v-container fluid px-0>
+      <v-checkbox
+        :label="`Checkbox 1: ${checkbox.toString()}`"
+        v-model="checkbox"
+      ></v-checkbox>
+      <v-radio-group v-model="radioGroup">
+        <v-radio
+          v-for="n in 3"
+          :key="n"
+          :label="`Radio ${n}`"
+          :value="n"
+        ></v-radio>
+      </v-radio-group>
+      <v-switch
+        :label="`Switch 1: ${switch1.toString()}`"
+        v-model="switch1"
+      ></v-switch>
+    </v-container>
   </v-app>
   <router-link to="/page2">次のページへ</router-link>
 </div>
 </template>
 
 <script>
+//require('vuetify/dist/vuetify.min.css');
+
 export default {
   name: 'global_footer',
   props: {
@@ -47,10 +55,18 @@ export default {
           this.bookInfoBool = true;
         });
     }
+  },
+  data () {
+    return {
+      checkbox: true,
+      radioGroup: 1,
+      switch1: true
+    }
   }
 }
 </script>
 
+<!--style scoped src="vuetify/dist/vuetify.min.css"></style-->
 <style scoped lang="scss">
 .page1{
   .message{

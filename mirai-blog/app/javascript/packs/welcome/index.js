@@ -29,9 +29,16 @@ Vue.use(Vuetify);
   console.log(app)
 //})
 
-//= require jquery3
-//= require popper
-//= require bootstrap-sprockets
+// = require jquery3
+// = require popper
+// = require bootstrap-sprockets
+
+// require('codemirror/lib/codemirror.css'); // codemirror
+// require('tui-editor/dist/tui-editor.css'); // editor ui
+// require('tui-editor/dist/tui-editor-contents.css'); // editor content
+// require('highlight.js/styles/github.css'); // code block highlight
+
+require('vuetify/dist/vuetify.min.css');
 
 // The above code uses Vue without the compiler, which means you cannot
 // use Vue to target elements in your existing html templates. You would

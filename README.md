@@ -957,11 +957,25 @@ https://vuetifyjs.com/ja/
 % yarn add vuetify
 ```
 
-`mirai-blog/app/javascript/packs/welcome/index.js`、`mirai-blog/app/assets/stylesheets/welcome.scss`にimportを追加し、
+`mirai-blog/app/javascript/packs/welcome/index.js`、`mirai-blog/app/assets/stylesheets/application.scss`にimportを追加し、
 
 `mirai-blog/app/javascript/packs/welcome/pages/page1.vue`にUIコンポーネントを追加
 
 https://vuetifyjs.com/ja/components/api-explorer
+
+```sh
+% yarn add material-design-icons-iconfont
+```
+
+Bootstrap4や、tui-editorと競合するので、各モジュール単位でインポートする。
+
+iconsだけ、`mirai-blog/app/assets/stylesheets/application.scss`でインポートする
+
+うーん、Bootstrap4やtui-editorと競合してるので、積極的に使わない方がいいかもしれない。 
+
+tui-editorもVuetifyもモジュール単位で有効にして使えばなんとかなるかも。
+
+Vueコンポーネント単位では無理っぽい。
 
 ## Bootstrap4をインストール
 
@@ -1293,6 +1307,82 @@ admin@kght6123.work
   - kght6123
 
 http://localhost:3000/login
+
+## tui.editorをインストール
+
+```sh
+% yarn add tui-editor bootstrap-honoka
+```
+
+`mirai-blog/app/assets/stylesheets/application.css`を`application.scss`にファイル名を変更
+
+`mirai-blog/app/assets/stylesheets/welcome.scss`に記載していたimportを、`application.scss`に移動
+
+importをbootstrapからbootstrap-honokaに変更し、tui-editorを追加
+
+```scss
+// @import "bootstrap";
+@import 'bootstrap-honoka/dist/css/bootstrap.min.css';
+
+@import "~codemirror/lib/codemirror.css"; // codemirror
+@import "~tui-editor/dist/tui-editor.min.css"; // editor ui
+@import "~tui-editor/dist/tui-editor-contents.min.css"; // editor content
+```
+
+`mirai-blog/app/javascript/packs/application.js`に下記を記載
+
+```js
+// use editor
+import { editor } from './shared/editor';
+```
+
+vueコンポーネント版を使う。CSSの読み込み方は同じ。
+
+https://github.com/nhnent/toast-ui.vue-editor
+
+```sh
+% yarn add @toast-ui/vue-editor
+```
+
+`mirai-blog/app/javascript/packs/welcome/main.vue` にサンプルを記載
+
+vue版はextsが使えないので、まだ使えない。
+
+issue出した https://github.com/nhnent/toast-ui.vue-editor/issues/7
+
+webpack版のchartも使えない、MiraiEditorの時から、verが1.2.6から1.3.0に上がってる
+
+```sh
+% rm -R node_modules
+% yarn cache clean
+% yarn
+```
+
+バージョンを戻しても動かない、、、意味不
+
+Vuetifyと競合してた、Vuetifyのグローバルインポートを除去したら治った。
+
+他のライブラリ（Bootstrapなど）と競合？？してて、chartとか崩れる。
+
+markdown-itを素で使うようにする
+
+## markdown-itをインストール
+
+https://github.com/markdown-it/markdown-it
+
+https://markdown-it.github.io
+
+```sh
+% yarn add markdown-it
+```
+
+```js
+const MarkdownIt = require('markdown-it');
+const md = new MarkdownIt();
+
+var result = md.render('# markdown-it rulezz!');
+```
+
 
 ## 認証・セキュリティ周りを調べたい
 

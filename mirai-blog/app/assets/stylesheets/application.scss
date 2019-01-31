@@ -13,3 +13,16 @@
  *= require_tree .
  *= require_self
  */
+
+// @import 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons';
+
+// $material-design-icons-font-path: '~material-design-icons-iconfont/dist/fonts/';
+// @import '~material-design-icons-iconfont/src/material-design-icons';
+
+// vuetifyのiconsだけなら競合してない
+@import 'material-design-icons-iconfont/dist/material-design-icons.css';
+
+// @import 'vuetify/dist/vuetify.min.css'; // tui-editor, bootstrap4と競合する
+
+// @import "bootstrap";
+@import 'bootstrap-honoka/dist/css/bootstrap.min.css'; // tui-editor, vuetifyと競合する
